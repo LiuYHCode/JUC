@@ -15,9 +15,14 @@ public class CASDemo {
         //期望，更新
         //public final boolean compareAndSet
         //如果我期望的值达到了，那就更新，否则，就不更新
+        //================捣乱的线程，aba问题=================
         atomicInteger.compareAndSet(2000,2001);
         System.out.println(atomicInteger.get());
 
+        atomicInteger.compareAndSet(2001,2000);
+        System.out.println(atomicInteger.get());
+
+        //================期望的线程，aba问题=================
         atomicInteger.compareAndSet(2000,2002);
         System.out.println(atomicInteger.get());
     }
