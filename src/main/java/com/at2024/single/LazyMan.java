@@ -1,5 +1,8 @@
 package com.at2024.single;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * @author lyh
  * @date 2024-08-21 23:52:33
@@ -38,12 +41,14 @@ public class LazyMan {
         return lazyMan;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            new Thread(()->{
-                LazyMan.getInstance();
-            }).start();
-        }
+    public static void main(String[] args) throws Exception {
+        //v4.0 通过反射破坏单例中的private，实现破坏单例
+        LazyMan instance = LazyMan.getInstance();
+        Constructor<LazyMan> declaredConstructor = LazyMan.class.getDeclaredConstructor(null);
+        declaredConstructor.setAccessible(true);
+        LazyMan instance1 = declaredConstructor.newInstance();
+        System.out.println(instance);
+        System.out.println(instance1);
     }
 
 }
