@@ -1,6 +1,7 @@
 package com.at2024.single;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -10,13 +11,17 @@ import java.lang.reflect.InvocationTargetException;
  * 道高一尺，魔高一丈！
  */
 public class LazyMan {
+    //v6.0 使用标志位防止单例被破坏，在构造方法使用新的判断
+    private static boolean qinjiang = false;
 
     //v3.0加volatile避免指令重排
     private volatile static LazyMan lazyMan;
 
     private LazyMan() {
         //v5.0 避免getInstance一次之后，在使用反射去构造创建新对象破坏单例
-        if (lazyMan != null) {
+        if (qinjiang == false) {
+            qinjiang = true;
+        } else {
             throw new RuntimeException("不要试图使用反射破坏异常");
         }
     }
@@ -47,11 +52,17 @@ public class LazyMan {
     public static void main(String[] args) throws Exception {
         //v4.0 通过反射破坏单例中的private，实现破坏单例
 //        LazyMan instance = LazyMan.getInstance();
+        //v6.0 继续破坏，反编译获取标志位进行破坏
+        Field declaredField = LazyMan.class.getDeclaredField("qinjiang");
+        declaredField.setAccessible(true);
+
         Constructor<LazyMan> declaredConstructor = LazyMan.class.getDeclaredConstructor(null);
         declaredConstructor.setAccessible(true);
         //v5.0 继续破坏单例，不走getInstance
-        LazyMan instance1 = declaredConstructor.newInstance();
         LazyMan instance = declaredConstructor.newInstance();
+        declaredField.set(instance, false);
+
+        LazyMan instance1 = declaredConstructor.newInstance();
         System.out.println(instance);
         System.out.println(instance1);
     }
