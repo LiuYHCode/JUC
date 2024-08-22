@@ -15,7 +15,10 @@ public class LazyMan {
     private volatile static LazyMan lazyMan;
 
     private LazyMan() {
-        System.out.println(Thread.currentThread().getName() + "ok!");
+        //v5.0 避免getInstance一次之后，在使用反射去构造创建新对象破坏单例
+        if (lazyMan != null) {
+            throw new RuntimeException("不要试图使用反射破坏异常");
+        }
     }
 
     //v2.0 双重检测锁模式的 懒汉式单例 DCL懒汉式，解决多线程情况下能拿到多个LazyMan实例
@@ -43,10 +46,12 @@ public class LazyMan {
 
     public static void main(String[] args) throws Exception {
         //v4.0 通过反射破坏单例中的private，实现破坏单例
-        LazyMan instance = LazyMan.getInstance();
+//        LazyMan instance = LazyMan.getInstance();
         Constructor<LazyMan> declaredConstructor = LazyMan.class.getDeclaredConstructor(null);
         declaredConstructor.setAccessible(true);
+        //v5.0 继续破坏单例，不走getInstance
         LazyMan instance1 = declaredConstructor.newInstance();
+        LazyMan instance = declaredConstructor.newInstance();
         System.out.println(instance);
         System.out.println(instance1);
     }
