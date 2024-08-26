@@ -38,6 +38,7 @@ public class CASDemo {
 
 //        a1=>1
 //        b1=>1
+//        true
 //        a2=>2
 //        true
 //        a3=>3
@@ -56,8 +57,8 @@ public class CASDemo {
 
             Lock lock = new ReentrantLock(true);
 
-            atomicStampedReference.compareAndSet(1, 2,
-                    atomicStampedReference.getStamp(), atomicStampedReference.getStamp() + 1);
+            System.out.println(atomicStampedReference.compareAndSet(1, 2,
+                    atomicStampedReference.getStamp(), atomicStampedReference.getStamp() + 1));
 
             System.out.println("a2=>"+atomicStampedReference.getStamp());
 
